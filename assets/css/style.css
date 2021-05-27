@@ -1,0 +1,99 @@
+.grid-container {
+    display: grid;
+    grid-template-areas: "left name name name name"
+                         "left profession profession profession profession"
+                         "left nav1 nav2 nav3 nav4";
+    grid-gap: 0;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: auto 100px 150px;
+}
+
+#main-header img {
+    max-height: 400px;
+    width: auto;
+}
+
+.header-left {
+    grid-area: left;
+}
+
+.header-name {
+    grid-area: name;
+}
+
+.header-profession {
+    grid-area: profession;
+}
+
+.port-item-1 {
+    grid-area: nav1;
+    background-color: var(--bs-primary);
+}
+
+.port-item-2 {
+    grid-area: nav2;
+    background-color: var(--bs-success);
+}
+
+.port-item-3 {
+    grid-area: nav3;
+    background-color: var(--bs-warning);
+}
+
+.port-item-4 {
+    grid-area: nav4;
+    background-color: var(--bs-danger);
+}
+
+#main-header .port-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+#main-header .port-item:not(.active):hover {
+    opacity: .8;
+    cursor: pointer;
+}
+
+.tab-section.active {
+    display: block;
+}
+
+.tab-section:not(.active) {
+    display: none;
+}
+
+.port-item__text {
+    text-transform: capitalize;
+}
+
+.section-contact .form-control {
+    /* border-color: var(--bs-dark); */
+    /* border: none; */
+}
+
+.section-contact .form-control:focus {
+    /* border-color: var(--bs-dark); */
+    /* border: none; */
+    /* outline: none; */
+    box-shadow: none;
+}
+
+@media screen and (max-width: 1050px) {
+    .grid-container {
+        grid-template-areas: 
+            "left left left left"
+            "name name name name"
+            "profession profession profession profession"
+            "nav1 nav2 nav3 nav4";
+        grid-template-rows: auto repeat(3, 200px);
+    }
+
+    img {
+        width: 100%;
+        max-height: 100%;
+    }
+}
