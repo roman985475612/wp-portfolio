@@ -41,21 +41,34 @@
             <div class="d-flex align-items-center px-5 bg-dark header-profession">
                 <span class="text-capitalize text-white"><?php echo get_theme_mod( 'pf_vacancy' ) ?></span>
             </div>
+            
+            <?php
+            $pages = get_pages( [
+                'sort_column'  => 'post_date',
+	            'sort_order'   => 'ASC',
+            ] );
+            $isActive = true;
+            $i = 1;
+            foreach( $pages as $page ) : 
+                $classes = [];
+                $classes[] = "port-item";
+                $classes[] = "port-item-$i";
+                $classes[] = get_post_meta( $page->ID, 'color', true );
 
-            <div class="port-item port-item-1 active" data-section="home">
-                <i class="fas fa-home fa-2x"></i>
-                <span class="port-item__text">home</span>
-            </div>
-            <div class="port-item port-item-2" data-section="resume">
-                <i class="fas fa-graduation-cap fa-2x"></i>
-                <span class="port-item__text">resume</span>
-            </div>
-            <div class="port-item port-item-3" data-section="work">
-                <i class="fas fa-folder-open fa-2x"></i>
-                <span class="port-item__text">work</span>
-            </div>
-            <div class="port-item port-item-4" data-section="contact">
-                <i class="fas fa-envelope fa-2x"></i>
-                <span class="port-item__text">contact</span>
-            </div>
+                if( $isActive ) {
+                    $classes[] = 'active';
+                }
+        
+                $isActive = false;
+                $i += 1;
+            ?>
+                <div 
+                    class="<?php echo implode( ' ', $classes ) ?>" 
+                    data-section="<?php echo get_post_meta( $page->ID, 'section', true ) ?>"
+                >
+                    <i class="<?php echo get_post_meta( $page->ID, 'icon', true ) ?> fa-2x"></i>
+                    <span class="port-item__text"><?php echo get_post_meta( $page->ID, 'name', true ) ?></span>
+                </div>
+            <?php endforeach ?>
+
         </header>

@@ -8,13 +8,19 @@ spl_autoload_register( function ( $class ) {
 });
 
 new \Metaboxes\Progress;
+new \Metaboxes\Page;
 new \PostColumns\Progress;
+new \PostColumns\Page;
 
 add_action( 'init', 'pf_create_post_types', 0 );
 add_action( 'wp_enqueue_scripts', 'pf_scripts' );
 add_action( 'customize_register', 'pf_customize_register' );
 
 add_shortcode( 'progress', 'show_progress_bar' );
+
+add_shortcode( 'simple', function ( $atts ) {
+	return 'Simple Shortcode!';
+} );
 
 function pf_scripts() {
     wp_enqueue_style( 'pf-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css' );
@@ -244,4 +250,18 @@ function show_progress_bar() {
 	ob_end_clean();
  
 	return $output;
+}
+
+function dd( $data ) {
+	$dt = print_r( $data, 1 );
+	if( is_string( $dt ) ) {
+		$dt = htmlspecialchars( $dt );
+	}
+	?>
+		<div class="alert alert-warning" role="alert">
+			<h5 class="alert-heading">Report!</h5>
+			<hr>
+			<pre><?php print_r( $dt ) ?></pre>
+		</div>
+	<?php
 }

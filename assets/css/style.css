@@ -27,22 +27,18 @@
 
 .port-item-1 {
     grid-area: nav1;
-    background-color: var(--bs-primary);
 }
 
 .port-item-2 {
     grid-area: nav2;
-    background-color: var(--bs-success);
 }
 
 .port-item-3 {
     grid-area: nav3;
-    background-color: var(--bs-warning);
 }
 
 .port-item-4 {
     grid-area: nav4;
-    background-color: var(--bs-danger);
 }
 
 #main-header .port-item {
