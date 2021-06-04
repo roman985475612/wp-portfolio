@@ -8,19 +8,16 @@ spl_autoload_register( function ( $class ) {
 });
 
 new \Metaboxes\Progress;
-new \Metaboxes\Page;
+new \Metaboxes\Section;
+new \Metaboxes\Resume;
+new \Metaboxes\Order;
 new \PostColumns\Progress;
-new \PostColumns\Page;
+new \PostColumns\Section;
+new \PostColumns\Order;
 
 add_action( 'init', 'pf_create_post_types', 0 );
 add_action( 'wp_enqueue_scripts', 'pf_scripts' );
 add_action( 'customize_register', 'pf_customize_register' );
-
-add_shortcode( 'progress', 'show_progress_bar' );
-
-add_shortcode( 'simple', function ( $atts ) {
-	return 'Simple Shortcode!';
-} );
 
 function pf_scripts() {
     wp_enqueue_style( 'pf-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css' );
@@ -31,6 +28,8 @@ function pf_scripts() {
     wp_enqueue_script( 'pf-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js', array(), '', true );
     wp_enqueue_script( 'pf-bb', 'https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js', array(), '', true );
     wp_enqueue_script( 'pf-main', get_template_directory_uri() . '/assets/js/main.js', array(), '', true );
+
+	wp_localize_script( 'pf-main', 'MyAjax', [ 'ajaxurl' => admin_url( 'admin-ajax.php' ) ] );
 }
 
 function pf_customize_register( $wp_customize ) {
@@ -150,7 +149,7 @@ function pf_customize_register( $wp_customize ) {
         ]
 	);
 
-	$setting = 'pf_bitbacket';
+	$setting = 'pf_bitbucket';
 
 	$wp_customize->add_setting(
 		$setting,
@@ -195,7 +194,29 @@ function pf_customize_register( $wp_customize ) {
 }
 
 function pf_create_post_types() {
-    register_post_type( 'progress', [
+    register_post_type( 'section', [
+        'labels' => [
+            'name'               => __( 'Секции', 'pf' ),
+            'singular_name'      => __( 'Секции', 'pf' ),
+            'add_new'            => __( 'Добавить новую секцию', 'pf' ),
+            'add_new_item'       => __( 'Добавить новую секцию', 'pf' ),
+            'edit_item'          => __( 'Редактировать секцию', 'pf' ),
+            'new_item'           => __( 'Новая секция', 'pf' ),
+            'view_item'          => __( 'Посмотреть секцию', 'pf' ),
+            'search_items'       => __( 'Найти секцию', 'pf' ),
+            'not_found'          => __( 'Секция не найдено', 'pf' ),
+            'not_found_in_trash' => __( 'В корзине секция не найдена', 'pf' ),
+            'parent_item_colon'  => __( '', 'pf' ),
+            'menu_name'          => __( 'Секции', 'pf' ),
+        ],
+        'public'       => true,
+        'show_ui'  	   => true,
+        'menu_icon'    => 'dashicons-screenoptions',
+        'show_in_menu' => true,
+        'supports'     => ['title', 'editor'],
+    ] );
+
+	register_post_type( 'progress', [
         'labels' => [
             'name'               => __( 'Прогресс', 'pf' ),
             'singular_name'      => __( 'Прогресс', 'pf' ),
@@ -224,32 +245,50 @@ function pf_create_post_types() {
             // 'custom-fields',
         ],
     ] );
-}
-
-function show_progress_bar() {
-    ob_start();
-
-    foreach ( get_posts( [ 'post_type' => 'progress' ] ) as $post ) :
-    ?>
-        <h4><?php echo $post->post_title ?></h4>
-        <div class="progress mb-3" style="height: 20px;">
-            <div 
-                class="progress-bar" 
-                role="progressbar" 
-                style="width: <?= get_post_meta( $post->ID, 'valuenow', true ) ?>%" 
-                aria-valuenow="<?= get_post_meta( $post->ID, 'valuenow', true ) ?>" 
-                aria-valuemin="0" 
-                aria-valuemax="100"
-            ><?= get_post_meta( $post->ID, 'valuenow', true ) ?>%</div>
-        </div>
-    <?php
-    endforeach;
-    wp_reset_postdata();
-
-	$output = ob_get_contents();
-	ob_end_clean();
- 
-	return $output;
+	
+	register_post_type( 'resume', [
+        'labels' => [
+            'name'               => __( 'Резюме', 'pf' ),
+            'singular_name'      => __( 'Резюме', 'pf' ),
+            'add_new'            => __( 'Добавить новое резюме', 'pf' ),
+            'add_new_item'       => __( 'Добавить новое резюме', 'pf' ),
+            'edit_item'          => __( 'Редактировать резюме', 'pf' ),
+            'new_item'           => __( 'Новое резюме', 'pf' ),
+            'view_item'          => __( 'Посмотреть резюме', 'pf' ),
+            'search_items'       => __( 'Найти резюме', 'pf' ),
+            'not_found'          => __( 'Резюме не найдено', 'pf' ),
+            'not_found_in_trash' => __( 'В корзине резюме не найдено', 'pf' ),
+            'parent_item_colon'  => __( '', 'pf' ),
+            'menu_name'          => __( 'Резюме', 'pf' ),
+        ],
+        'public'        => false,
+        'show_ui'   	=> true,
+        'menu_icon'     => 'dashicons-welcome-learn-more',
+        'show_in_menu'  => true,
+        'supports'      => ['title', 'editor'],
+    ] );
+	
+	register_post_type( 'order', [
+        'labels' => [
+            'name'               => __( 'Заявки', 'pf' ),
+            'singular_name'      => __( 'Заявки', 'pf' ),
+            'add_new'            => __( 'Добавить новую заявку', 'pf' ),
+            'add_new_item'       => __( 'Добавить новую заявку', 'pf' ),
+            'edit_item'          => __( 'Редактировать заявку', 'pf' ),
+            'new_item'           => __( 'Новое заявка', 'pf' ),
+            'view_item'          => __( 'Посмотреть заявку', 'pf' ),
+            'search_items'       => __( 'Найти заявку', 'pf' ),
+            'not_found'          => __( 'Заявка не найдено', 'pf' ),
+            'not_found_in_trash' => __( 'В корзине заявка не найдена', 'pf' ),
+            'parent_item_colon'  => __( '', 'pf' ),
+            'menu_name'          => __( 'Заявки', 'pf' ),
+        ],
+        'public'        => false,
+        'show_ui'   	=> true,
+        'menu_icon'     => 'dashicons-email',
+        'show_in_menu'  => true,
+        'supports'      => ['title'],
+    ] );
 }
 
 function dd( $data ) {
@@ -259,9 +298,11 @@ function dd( $data ) {
 	}
 	?>
 		<div class="alert alert-warning" role="alert">
-			<h5 class="alert-heading">Report!</h5>
-			<hr>
 			<pre><?php print_r( $dt ) ?></pre>
 		</div>
 	<?php
 }
+
+require get_template_directory() . '/inc/shortcodes.php';
+
+require get_template_directory() . '/inc/form-controller.php';

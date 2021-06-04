@@ -17,22 +17,22 @@
             <div class="d-flex justify-content-between align-items-center px-5 text-white header-name" style="background-color: var(--bs-gray-dark);">
                 <h1 class="display-4"><?php echo get_theme_mod( 'pf_username' ) ?></h1>
                 <div class="d-block">
-                    <a href="<?php echo get_theme_mod( 'pf_github' ) ?>" class="text-white">
+                    <a href="//<?php echo get_theme_mod( 'pf_github' ) ?>" class="text-white">
                         <i class="fab fa-github fa-2x"></i>
                     </a>
                 </div>
                 <div class="d-block">
-                    <a href="<?php echo get_theme_mod( 'pf_bitbucket' ) ?>" class="text-white">
+                    <a href="//<?php echo get_theme_mod( 'pf_bitbucket' ) ?>" class="text-white">
                         <i class="fab fa-bitbucket fa-2x"></i>
                     </a>
                 </div>
                 <div class="d-block">
-                    <a href="<?php echo get_theme_mod( 'pf_gitlab' ) ?>" class="text-white">
+                    <a href="//<?php echo get_theme_mod( 'pf_gitlab' ) ?>" class="text-white">
                         <i class="fab fa-gitlab fa-2x"></i>
                     </a>
                 </div>
                 <div class="d-block">
-                    <a href="<?php echo get_theme_mod( 'pf_telegram' ) ?>" class="text-white">
+                    <a href="//<?php echo get_theme_mod( 'pf_telegram' ) ?>" class="text-white">
                         <i class="fab fa-telegram-plane fa-2x"></i>
                     </a>
                 </div>
@@ -43,17 +43,18 @@
             </div>
             
             <?php
-            $pages = get_pages( [
-                'sort_column'  => 'post_date',
-	            'sort_order'   => 'ASC',
+            $posts = get_posts( [
+                'post_type'  => 'section',
+                // 'meta_value' => 'sort',
+                'order'      => 'ASC',
             ] );
             $isActive = true;
             $i = 1;
-            foreach( $pages as $page ) : 
+            foreach( $posts as $post ) :
                 $classes = [];
                 $classes[] = "port-item";
                 $classes[] = "port-item-$i";
-                $classes[] = get_post_meta( $page->ID, 'color', true );
+                $classes[] = get_post_meta( $post->ID, 'color', true );
 
                 if( $isActive ) {
                     $classes[] = 'active';
@@ -64,11 +65,12 @@
             ?>
                 <div 
                     class="<?php echo implode( ' ', $classes ) ?>" 
-                    data-section="<?php echo get_post_meta( $page->ID, 'section', true ) ?>"
+                    data-section="<?php echo get_post_meta( $post->ID, 'section', true ) ?>"
                 >
-                    <i class="<?php echo get_post_meta( $page->ID, 'icon', true ) ?> fa-2x"></i>
-                    <span class="port-item__text"><?php echo get_post_meta( $page->ID, 'name', true ) ?></span>
+                    <i class="<?php echo get_post_meta( $post->ID, 'icon', true ) ?> fa-2x"></i>
+                    <span class="port-item__text"><?php echo get_post_meta( $post->ID, 'name', true ) ?></span>
                 </div>
-            <?php endforeach ?>
+            <?php 
+            endforeach ?>
 
         </header>

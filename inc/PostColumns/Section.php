@@ -2,9 +2,9 @@
 
 namespace PostColumns;
 
-class Page
+class Section
 {
-    private $post_type = 'page';
+    private $post_type = 'section';
 
     public function __construct()
     {

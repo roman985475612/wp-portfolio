@@ -2,9 +2,9 @@
 
 namespace Metaboxes;
 
-class Page
+class Resume
 {
-    private static $post_type = 'page';
+    private static $post_type = 'resume';
 
     public function __construct()
     {
@@ -23,78 +23,35 @@ class Page
             'low'  
         );
     }
+    
     public function render_metabox( $post ) 
     {
         $fields = [
             [
-                'id'       => 'sort',
-                'value'    => get_post_meta( $post->ID, 'sort', 1 ),
-                'tag'      => 'input',
-                'type'     => 'number',
-                'disabled' => false,
-                'label'    => __( 'Порядок секции', 'pf' ),
+                'id'    => 'sort',
+                'tag'   => 'input',
+                'type'  => 'number',
+                'label' => __( 'Порядок секции', 'pf' ),
             ],
             [
-                'id'       => 'name',
-                'value'    => get_post_meta( $post->ID, 'name', 1 ),
-                'tag'      => 'input',
-                'type'     => 'text',
-                'disabled' => false,
-                'label'    => __( 'Наименование секции', 'pf' ),
+                'id'    => 'date_start',
+                'tag'   => 'input',
+                'type'  => 'date',
+                'label' => __( 'Дата начала', 'pf' ),
             ],
             [
-                'id'       => 'title',
-                'value'    => get_post_meta( $post->ID, 'title', 1 ),
-                'tag'      => 'input',
-                'type'     => 'text',
-                'disabled' => false,
-                'label'    => __( 'Заголовок секции', 'pf' ),
+                'id'    => 'date_end',
+                'tag'   => 'input',
+                'type'  => 'date',
+                'label' => __( 'Дата окончания', 'pf' ),
             ],
             [
-                'id'       => 'desc',
-                'value'    => get_post_meta( $post->ID, 'desc', 1 ),
-                'tag'      => 'textarea',
-                'disabled' => false,
-                'label'    => __( 'Описание секции', 'pf' ),
-            ],
-            [
-                'id'       => 'section',
-                'value'    => get_post_meta( $post->ID, 'section', 1 ),
-                'tag'      => 'input',
-                'type'     => 'text',
-                'disabled' => false,
-                'label'    => __( 'Код секции', 'pf' ),
-            ],
-            [
-                'id'       => 'icon',
-                'value'    => get_post_meta( $post->ID, 'icon', 1 ),
-                'tag'      => 'input',
-                'type'     => 'text',
-                'disabled' => false,
-                'label'    => __( 'Класс иконки', 'pf' ),
-            ],
-            [
-                'id'       => 'color',
-                'value'    => get_post_meta( $post->ID, 'color', 1 ),
-                'tag'      => 'input',
-                'type'     => 'text',
-                'disabled' => false,
-                'label'    => __( 'Класс фона', 'pf' ),
-            ],
-            [
-                'id'       => 'shortcode',
-                'value'    => get_post_meta( $post->ID, 'shortcode', 1 ),
-                'tag'      => 'input',
-                'type'     => 'text',
-                'disabled' => false,
-                'label'    => __( 'Шорткод', 'pf' ),
+                'id'    => 'position',
+                'tag'   => 'input',
+                'type'  => 'text',
+                'label' => __( 'Должность', 'pf' ),
             ],
         ];
-        $this->show_metabox( $post, $fields );
-	}
-
-    protected function show_metabox( $post, $fields )
-    {
 		?>
 		<table class="form-table">
             <tbody>
@@ -106,14 +63,14 @@ class Page
                         <td>
                             <?php if( $field['tag'] == 'input' ) : ?>
                                 <input 
-                                    name="<?php echo self::$post_type . '[' . $field['id'] . ']' ?>" 
-                                    type="<?php echo $field['type'] ?>" 
-                                    id="<?php echo self::$post_type . '_' . $field['id'] ?>" 
-                                    value="<?php echo $field['value'] ?? '' ?>" 
-                                    placeholder="<?php echo $field['placeholder'] ?? '' ?>" 
+                                    name="<?= self::$post_type . '[' . $field['id'] . ']' ?>" 
+                                    type="<?= $field['type'] ?>" 
+                                    id="<?= self::$post_type . '_' . $field['id'] ?>" 
+                                    value="<?= get_post_meta( $post->ID, $field['id'], 1 ) ?? '' ?>" 
+                                    placeholder="<?= $field['placeholder'] ?? '' ?>" 
                                     class="regular-text"
                                     style="width:100%"
-                                    <?php if( $field['disabled'] ) : ?>
+                                    <?php if( isset( $field['disabled'] ) && $field['disabled'] ) : ?>
                                         disabled
                                     <?php endif ?>
                                 >
@@ -124,7 +81,7 @@ class Page
                                     class="metavalue" 
                                     rows="2"
                                     style="width:100%"
-                                ><?php echo $field['value'] ?? '' ?></textarea>
+                                ><?= get_post_meta( $post->ID, $field['id'], 1 ) ?? '' ?></textarea>
                             <?php elseif( $field['tag'] == 'select' ) : ?>
                                 <label for="<?php echo self::$post_type . '_' . $field['id'] ?>">
                                     <select 
@@ -137,7 +94,7 @@ class Page
                                                 value="<?php echo $key ?>"
                                                 <?php selected( $key, get_post_meta( $post->ID, $field['id'], 1 ) ) ?>
                                             >
-                                                <?php echo $value ?>
+                                                <?= get_post_meta( $post->ID, $field['id'], 1 ) ?>
                                             </option>
                                         <?php endforeach ?>
                                     </select>
