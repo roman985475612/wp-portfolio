@@ -11,13 +11,21 @@ new \Metaboxes\Progress;
 new \Metaboxes\Section;
 new \Metaboxes\Resume;
 new \Metaboxes\Order;
+new \Metaboxes\Work;
 new \PostColumns\Progress;
 new \PostColumns\Section;
 new \PostColumns\Order;
+new \PostColumns\Resume;
+new \PostColumns\Work;
 
+add_action( 'after_setup_theme', 'pf_setup' );
 add_action( 'init', 'pf_create_post_types', 0 );
 add_action( 'wp_enqueue_scripts', 'pf_scripts' );
 add_action( 'customize_register', 'pf_customize_register' );
+
+function pf_setup() {
+    add_theme_support( 'post-thumbnails' );
+}
 
 function pf_scripts() {
     wp_enqueue_style( 'pf-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css' );
@@ -235,15 +243,8 @@ function pf_create_post_types() {
         'has_archive'   => true,
         'rewrite'       => ['slug'],
         'menu_icon'     => 'dashicons-chart-bar',
-        // 'show_in_menu'  => 'sections',
         'show_in_menu'  => true,
-        'supports'      => [
-            'title',
-            // 'editor',
-            // 'thumbnail',
-            // 'excerpt',
-            // 'custom-fields',
-        ],
+        'supports'      => ['title'],
     ] );
 	
 	register_post_type( 'resume', [
@@ -289,20 +290,32 @@ function pf_create_post_types() {
         'show_in_menu'  => true,
         'supports'      => ['title'],
     ] );
-}
-
-function dd( $data ) {
-	$dt = print_r( $data, 1 );
-	if( is_string( $dt ) ) {
-		$dt = htmlspecialchars( $dt );
-	}
-	?>
-		<div class="alert alert-warning" role="alert">
-			<pre><?php print_r( $dt ) ?></pre>
-		</div>
-	<?php
+	
+	register_post_type( 'work', [
+        'labels' => [
+            'name'               => __( 'Работы', 'pf' ),
+            'singular_name'      => __( 'Работы', 'pf' ),
+            'add_new'            => __( 'Добавить новую работу', 'pf' ),
+            'add_new_item'       => __( 'Добавить новую работу', 'pf' ),
+            'edit_item'          => __( 'Редактировать работу', 'pf' ),
+            'new_item'           => __( 'Новая работа', 'pf' ),
+            'view_item'          => __( 'Посмотреть работу', 'pf' ),
+            'search_items'       => __( 'Найти работу', 'pf' ),
+            'not_found'          => __( 'Заявка на работу', 'pf' ),
+            'not_found_in_trash' => __( 'В корзине работа не найдена', 'pf' ),
+            'parent_item_colon'  => __( '', 'pf' ),
+            'menu_name'          => __( 'Работы', 'pf' ),
+        ],
+        'public'        => false,
+        'show_ui'   	=> true,
+        'menu_icon'     => 'dashicons-images-alt',
+        'show_in_menu'  => true,
+        'supports'      => ['title', 'thumbnail'],
+    ] );
 }
 
 require get_template_directory() . '/inc/shortcodes.php';
 
 require get_template_directory() . '/inc/form-controller.php';
+
+require get_template_directory() . '/inc/helpers.php';
