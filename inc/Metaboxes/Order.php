@@ -4,7 +4,7 @@ namespace Metaboxes;
 
 class Order extends Metabox
 {
-    protected static $post_type = 'order';
+    protected static $post_type = 'orders';
     
     public function render_metabox( $post ) 
     {

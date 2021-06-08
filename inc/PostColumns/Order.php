@@ -4,16 +4,16 @@ namespace PostColumns;
 
 class Order
 {
-    private $post_type = 'order';
+    private $post_type = 'orders';
 
-    public function __construct()
-    {
+    public function __construct() {
         add_action( "manage_{$this->post_type}_posts_columns", [ $this, 'manage_posts_columns' ] );
         add_action( "manage_{$this->post_type}_posts_custom_column", [ $this, 'manage_posts_custom_column' ], 10, 2 );
+        add_filter( "manage_edit-{$this->post_type}_sortable_columns", [ $this, 'manage_edit_sortable_columns' ] );
+        add_action( 'pre_get_posts', [ $this, 'orderby_column' ] );
     }
 
-    public function manage_posts_columns( $columns )
-    {
+    public function manage_posts_columns( $columns ) {
         $new_columns = [
             'name'    => __( 'Имя клиента', 'pl' ),
             'comment' => __( 'Комментарий', 'pl' ),
@@ -23,8 +23,7 @@ class Order
         return array_slice( $columns, 0, 2 ) + $new_columns + $columns;    
     }
 
-    public function manage_posts_custom_column( $column_name, $post_ID )
-    {
+    public function manage_posts_custom_column( $column_name, $post_ID ) {
         switch( $column_name ) {
             case 'name':
             case 'comment':
@@ -50,5 +49,22 @@ class Order
                 break;
             }
         return $column_name;
+    }
+
+    public function manage_edit_sortable_columns( $columns ) {
+        $columns['status'] = 'status';
+        return $columns;
+    }
+    
+    public function orderby_column( $query ) {
+        if( ! is_admin() )
+            return;
+     
+        $orderby = $query->get( 'orderby' );
+     
+        if( 'status' == $orderby ) {
+            $query->set('meta_key', 'status');
+            $query->set('orderby', 'meta_value');
+        }
     }
 }

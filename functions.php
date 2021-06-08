@@ -269,7 +269,7 @@ function pf_create_post_types() {
         'supports'      => ['title', 'editor'],
     ] );
 	
-	register_post_type( 'order', [
+	register_post_type( 'orders', [
         'labels' => [
             'name'               => __( 'Заявки', 'pf' ),
             'singular_name'      => __( 'Заявки', 'pf' ),

@@ -25,7 +25,7 @@ function pf_contact_form_handler() {
         $msg   = sanitize_text_field( $msg );
     
         $id = wp_insert_post([
-            'post_type'   => 'order',
+            'post_type'   => 'orders',
             'post_title'  => 'Заявка # ',
             'post_status' => 'publish',
             'meta_input'  => [
@@ -43,7 +43,7 @@ function pf_contact_form_handler() {
             ] );
         }
     
-        $response['id'] = $id;
+        $response['id']  = $id;
         $response['msg'] = 'Ваша заявка # ' . $id . ' принята!';
     }
     

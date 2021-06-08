@@ -2,13 +2,16 @@
     get_header();
 ?>
     <?php
-    $posts = get_posts( [
+    $query = new WP_Query( [
         'post_type'  => 'section',
-        // 'meta_value' => 'sort',
         'order'      => 'ASC',
+        'orderby'    => 'meta_value_num',
+        'meta_key'   => 'sort',
     ] );
+    
     $isActive = true;
-    foreach( $posts as $post ) : 
+    
+    foreach( $query->posts as $post ) : 
         $section = get_post_meta( $post->ID, 'section', true );
 
         $sectionClasses = [];
@@ -19,19 +22,21 @@
             $sectionClasses[] = 'active';
         }
 
+        $sectionClassList = implode( ' ', $sectionClasses );
+
         $isActive = false;
     ?>
         <section 
-            class="<?php echo implode( ' ', $sectionClasses ) ?>" 
-            id="<?php echo $section ?>"
+            class="<?= $sectionClassList ?>" 
+            id="<?= $section ?>"
         >
-            <div class="card card-body <?php echo get_post_meta( $post->ID, 'color', true ) ?> text-white py-5">
-                <h2 class="text-capitalize"><?php echo get_post_meta( $post->ID, 'title', true ) ?></h2>
-                <p class="lead"><?php echo get_post_meta( $post->ID, 'desc', true ) ?></p>
+            <div class="card card-body <?= get_post_meta( $post->ID, 'color', true ) ?> text-white py-5">
+                <h2 class="text-capitalize"><?= get_post_meta( $post->ID, 'title', true ) ?></h2>
+                <p class="lead"><?= get_post_meta( $post->ID, 'desc', true ) ?></p>
             </div>
             <div class="card card-body py-5">
-                <?php echo $post->post_content ?>
-                <?php echo do_shortcode( get_post_meta( $post->ID, 'shortcode', true ) ) ?>
+                <?= $post->post_content ?>
+                <?= do_shortcode( get_post_meta( $post->ID, 'shortcode', true ) ) ?>
             </div>
         </section>
     <?php endforeach ?>
