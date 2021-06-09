@@ -1,5 +1,7 @@
 <?php
 
+define( 'DISALLOW_FILE_EDIT', true );
+
 spl_autoload_register( function ( $class ) {
     $path = get_template_directory() . '/inc/' . str_replace( '\\', '/', $class ) . '.php';
     if( file_exists( $path ) ) {
@@ -22,6 +24,7 @@ add_action( 'after_setup_theme', 'pf_setup' );
 add_action( 'init', 'pf_create_post_types', 0 );
 add_action( 'wp_enqueue_scripts', 'pf_scripts' );
 add_action( 'customize_register', 'pf_customize_register' );
+add_action( 'template_redirect', 'pf_template_redirect' );
 
 function pf_setup() {
     add_theme_support( 'post-thumbnails' );
@@ -33,6 +36,10 @@ function pf_scripts() {
     wp_enqueue_style( 'pf-bb', 'https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css' );
     wp_enqueue_style( 'pf-style', get_template_directory_uri() . '/assets/css/style.css' );
 
+    wp_deregister_script( 'jquery' );
+    wp_register_script( 'jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', [], '1.12.2', true );
+    wp_enqueue_script( 'jquery' );
+    
     wp_enqueue_script( 'pf-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js', array(), '', true );
     wp_enqueue_script( 'pf-bb', 'https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js', array(), '', true );
     wp_enqueue_script( 'pf-main', get_template_directory_uri() . '/assets/js/main.js', array(), '', true );
@@ -199,6 +206,27 @@ function pf_customize_register( $wp_customize ) {
         ]
 	);
 
+	$setting = 'pf_resume';
+
+	$wp_customize->add_setting(
+		$setting,
+		[
+            'type'       => 'theme_mod',
+	        'capability' => 'edit_theme_options',
+			'default'	 => '',
+			'transport'	 => $transport,
+        ]
+	);
+
+	$wp_customize->add_control(
+		$setting,
+		[
+			'section' => 'pf_header',
+			'label'	  => __( 'Resume', 'pf' ),
+			'type'	  => 'url'
+        ]
+	);
+
 }
 
 function pf_create_post_types() {
@@ -312,6 +340,13 @@ function pf_create_post_types() {
         'show_in_menu'  => true,
         'supports'      => ['title', 'thumbnail'],
     ] );
+}
+
+function pf_template_redirect() {
+    if( is_attachment() ) {
+        wp_redirect( home_url(), 301 );
+        exit;
+    }
 }
 
 require get_template_directory() . '/inc/shortcodes.php';
