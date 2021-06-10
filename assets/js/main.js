@@ -1,51 +1,46 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-    const tabList = document.querySelectorAll('.port-item')
-    const tabSection = document.querySelectorAll('.tab-section');
+    const mainHeader = document.getElementById('main-header')
 
-    tabList.forEach(i => i.addEventListener('click', showTab))
-
-    function showTab() {
-        hideSections()
-
-        this.classList.add('active')
-
-        document.getElementById(this.dataset.section)
+    mainHeader.addEventListener('click', e => {
+        if( e.target.classList.contains('port-item') ) {
+            document.querySelector('.port-item.active')
                 .classList
-                .add('active')
-    }
+                .remove('active')
 
-    function hideSections() {
-        tabList.forEach(t => t.classList.remove('active'))
-        tabSection.forEach(s => s.classList.remove('active'))
-    }
+            document.querySelector('.tab-section.active')
+                    .classList
+                    .remove('active')
+
+            e.target.classList.add('active')
+
+            document.getElementById(e.target.dataset.section)
+                    .classList
+                    .add('active')
+        }
+    })
 
     // Contact
 
     const contactForm = document.getElementById('contact-form')
-    const fields = document.querySelectorAll('.form-control')
+    const fields = contactForm.querySelectorAll('.form-control')
     const btnContactForm = document.getElementById('btnContactForm')
     const spinnerContactForm = document.getElementById('spinnerContactForm')
     const modal = new bootstrap.Modal(document.getElementById('modal'))
     const modalTitle = document.getElementById('modalTitle')
     const modalBody = document.getElementById('modalBody')
 
-    fields.forEach(f => f.addEventListener('change', validateField))
-
-    function validateField() {
-        if (this.value === '') {
-            if (this.classList.contains('is-valid')) {
-                this.classList.remove('is-valid')
-            }
-            this.classList.add('is-invalid')
-        } else {
-            if (this.classList.contains('is-invalid')) {
-                this.classList.remove('is-invalid')
-            }
-            this.classList.add('is-valid')
-        }
-
+    const patterns = {
+        notEmpty: /.+/,
+        email: /^.+@.+\..+$/
     }
+
+    contactForm.addEventListener('focusin', e => {
+        if (e.target.classList.contains('form-control')) {
+            e.target.classList.remove('is-invalid')
+            e.target.classList.remove('is-valid')
+        }
+    })
 
     contactForm.addEventListener('submit', async e => {
         e.preventDefault()
@@ -56,11 +51,14 @@ window.addEventListener('DOMContentLoaded', () => {
         // Validation 
         isValid = true
         fields.forEach(f => {
-            if (f.value === '') {
+            let pattern = patterns[f.dataset.valid]
+            f.value = f.value.trim()
+            
+            if( pattern.test( f.value ) ) {
+                f.classList.add('is-valid')
+            } else {
                 f.classList.add('is-invalid')
                 isValid = false
-            } else {
-                f.classList.add('is-valid')
             }
         })
 
