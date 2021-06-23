@@ -12,7 +12,7 @@
     <div class="container">
         <header id="main-header" class="grid-container">
             <div class="header-left">
-                <img src="<?php echo get_theme_mod( 'pf_photo' ) ?>" class="" alt="">
+                <img src="<?= get_theme_mod( 'pf_photo' ) ?>" alt="<?= esc_html( get_the_title() ) ?>">
             </div>
             <div class="d-flex justify-content-between align-items-center px-5 text-white header-name" style="background-color: var(--bs-gray-dark);">
                 <h1 class="display-4"><?php echo get_theme_mod( 'pf_username' ) ?></h1>

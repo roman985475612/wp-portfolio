@@ -3,7 +3,17 @@ window.addEventListener('DOMContentLoaded', () => {
     const mainHeader = document.getElementById('main-header')
 
     mainHeader.addEventListener('click', e => {
-        if( e.target.classList.contains('port-item') ) {
+        el = null
+
+        if (e.target.parentNode.classList.contains('port-item')) {
+            el = e.target.parentNode
+        }
+
+        if (e.target.classList.contains('port-item')) {
+            el = e.target
+        }
+
+        if (el) {
             document.querySelector('.port-item.active')
                 .classList
                 .remove('active')
@@ -12,9 +22,9 @@ window.addEventListener('DOMContentLoaded', () => {
                     .classList
                     .remove('active')
 
-            e.target.classList.add('active')
+            el.classList.add('active')
 
-            document.getElementById(e.target.dataset.section)
+            document.getElementById(el.dataset.section)
                     .classList
                     .add('active')
         }
@@ -73,7 +83,7 @@ window.addEventListener('DOMContentLoaded', () => {
             })
     
             let result = await response.json()
-            if ( ! result.error ) {
+            if ( result.is_valid ) {
                 modalTitle.innerText = 'Заявка принята!'
                 modalBody.innerText = `Ваша заявка зарегистрирована под номером ${result.id}`
                 modal.show()
@@ -82,7 +92,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 fields.forEach( f => f.classList.remove('is-valid') )
             }
             else {
-                console.error( result.msg )
+                for (var key in result.errors) {
+                    let field = document.querySelector('#' + key)
+                    field.classList.add('is-invalid')
+
+                    let validation = document.querySelector('#' + key + 'Validation')
+                    validation.innerText = result.errors[key]
+                }
             }    
         }
         

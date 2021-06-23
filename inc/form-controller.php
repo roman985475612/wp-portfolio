@@ -7,23 +7,38 @@ if( wp_doing_ajax() ) {
 
 function pf_contact_form_handler() {
     $response = [
-        'msg'   => '',
-        'error' => false,
-        'id'    => null,
+        'is_valid' => true,
+        'errors'   => [],
+        'id'       => null,
     ];
 
     $name  = $_POST['name'] ?? false;
     $email = $_POST['email'] ?? false;
     $msg   = $_POST['msg'] ?? '';
 
-    if( ! $name || ! $email ) {
-        $response['msg'] = __( 'Пожалуйста, заполните все поля!', 'pf' );
-        $response['error'] = true;
-    } else {
-        $name  = sanitize_text_field( $name );
-        $email = sanitize_text_field( $email );
-        $msg   = sanitize_text_field( $msg );
+    $name  = sanitize_text_field( $name );
+    $email = sanitize_text_field( $email );
+    $msg   = sanitize_text_field( $msg );
+
+    if( empty( $name ) ) {
+        $response['errors']['name'] = __( 'Пожалуйста, заполните имя!', 'pf' );
+        $response['is_valid'] = false;
+    } 
+
+    if( empty( $email ) ) {
+        $response['errors']['email'] = __( 'Пожалуйста, заполните email!', 'pf' );
+        $response['is_valid'] = false;
+    } elseif( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+        $response['errors']['email'] = __( 'Пожалуйста, введите корректный email!', 'pf' );
+        $response['is_valid'] = false;
+    } 
+
+    if( empty( $msg ) ) {
+        $response['errors']['msg'] = __( 'Пожалуйста, заполните сообщение!', 'pf' );
+        $response['is_valid'] = false;
+    } 
     
+    if( $response['is_valid'] ) {
         $id = wp_insert_post([
             'post_type'   => 'orders',
             'post_title'  => 'Заявка # ',
@@ -43,8 +58,7 @@ function pf_contact_form_handler() {
             ] );
         }
     
-        $response['id']  = $id;
-        $response['msg'] = 'Ваша заявка # ' . $id . ' принята!';
+        $response['id'] = $id;
     }
     
     echo json_encode($response);
